@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sagemath-calculator
+    name: sagemath-calculator-lite
     env: docker
     region: oregon
     plan: free

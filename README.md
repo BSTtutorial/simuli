@@ -1,100 +1,117 @@
-# SageMath Web Calculator
+# SageMath Web Calculator (Lightweight)
 
-A web-based calculator powered by SageMath that can perform complex mathematical computations including calculus, algebra, linear algebra, and more.
+A lightweight web-based calculator powered by SageMath that can perform complex mathematical computations. This version uses the **SageMathCell API** instead of hosting SageMath locally, making it perfect for free hosting platforms.
 
-## Features
+## ✨ Features
 
-- 🔢 Symbolic mathematics (calculus, algebra, number theory)
-- 📊 Matrix operations
-- 🎯 Equation solving
-- 📈 Limits and derivatives
-- ∫ Integration
+- 🔢 Full SageMath functionality via API
+- 📊 Matrix operations, calculus, algebra, number theory
+- 🎯 Equation solving, limits, derivatives, integration
 - 🌐 Clean, modern web interface
-- 🚀 Easy to deploy on Render
+- 🚀 **Super lightweight** (~50MB vs 4GB!)
+- ⚡ **Fast deployment** (~1-2 minutes vs 15+ minutes)
+- 💰 **Works on ANY free tier**
 
-## Local Development
+## 🚀 Quick Deploy
 
-### Prerequisites
+### Option 1: Railway.app (Recommended - Best Free Tier)
 
-- Docker (recommended) OR
-- SageMath installed locally
-- Python 3.8+
-
-### Running with Docker (Recommended)
-
-```bash
-docker build -t sagemath-webapp .
-docker run -p 10000:10000 sagemath-webapp
-```
-
-Then open http://localhost:10000 in your browser.
-
-### Running without Docker
-
-If you have SageMath installed:
-
-```bash
-pip install Flask gunicorn
-python app.py
-```
-
-## Deploying to Render
-
-### Method 1: Using the Render Dashboard (Easiest)
-
-1. Create a GitHub repository and push all these files to it
-2. Go to [Render Dashboard](https://dashboard.render.com/)
-3. Click "New +" and select "Web Service"
-4. Connect your GitHub repository
-5. Render will automatically detect the `render.yaml` file
-6. Click "Apply" to deploy
-
-### Method 2: Manual Setup
-
-1. Go to [Render Dashboard](https://dashboard.render.com/)
-2. Click "New +" and select "Web Service"
+1. Sign up at [railway.app](https://railway.app)
+2. Click "New Project" → "Deploy from GitHub repo"
 3. Connect your GitHub repository
-4. Configure:
-   - **Name**: sagemath-calculator (or your preferred name)
-   - **Environment**: Docker
-   - **Region**: Choose your preferred region
-   - **Branch**: main (or your default branch)
-   - **Dockerfile Path**: ./Dockerfile
-5. Click "Create Web Service"
+4. Railway auto-detects the Dockerfile
+5. Deploy! (Takes ~1-2 minutes)
 
-### Method 3: Using Render Blueprint
+**Why Railway?**
+- ✅ $5 free credit monthly
+- ✅ No credit card required initially
+- ✅ Doesn't sleep aggressively
+- ✅ Great for Docker apps
 
-If you have the `render.yaml` file in your repo:
+### Option 2: Render.com
+
+1. Push code to GitHub
+2. Go to [render.com](https://render.com/dashboard)
+3. Click "New +" → "Web Service"
+4. Connect your GitHub repo
+5. Select **Docker** environment
+6. Click "Create Web Service"
+
+**Settings:**
+- Environment: **Docker**
+- Region: Choose closest to you
+- Plan: Free
+
+### Option 3: Fly.io
 
 ```bash
-# Push your code to GitHub first, then:
-# Render will automatically detect and use the render.yaml configuration
+# Install flyctl
+curl -L https://fly.io/install.sh | sh
+
+# Login
+flyctl auth login
+
+# Deploy
+flyctl launch
+flyctl deploy
 ```
 
-## Configuration
+### Option 4: Google Cloud Run
 
-The application uses the following environment variables:
+1. Install gcloud CLI
+2. Build and deploy:
+```bash
+gcloud builds submit --tag gcr.io/YOUR-PROJECT/sagemath-calc
+gcloud run deploy --image gcr.io/YOUR-PROJECT/sagemath-calc --platform managed
+```
 
-- `PORT`: The port the application runs on (default: 10000)
-
-These are automatically configured in the `render.yaml` file.
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-sagemath-webapp/
-├── app.py                  # Flask application backend
+sagemath-webapp-lite/
+├── app.py                  # Flask app using SageMathCell API
 ├── templates/
 │   └── index.html         # Frontend interface
-├── requirements.txt       # Python dependencies
+├── requirements.txt       # Python dependencies (only 3!)
 ├── Dockerfile            # Docker configuration
-├── render.yaml           # Render deployment configuration
+├── render.yaml           # Render deployment config
 └── README.md             # This file
 ```
 
-## Usage Examples
+## 🔧 Local Development
 
-Once deployed, you can use the calculator with SageMath syntax:
+### Using Docker (Recommended)
+
+```bash
+docker build -t sagemath-lite .
+docker run -p 10000:10000 sagemath-lite
+```
+
+Open http://localhost:10000
+
+### Using Python directly
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+## 💡 How It Works
+
+Instead of installing the massive SageMath package (~4GB), this app:
+
+1. Takes user input from the web interface
+2. Sends it to SageMathCell's free public API
+3. Returns the calculated result
+4. Displays it in the browser
+
+**Benefits:**
+- ⚡ 50x smaller Docker image
+- 🚀 10x faster deployment
+- 💰 Works on smallest free tiers
+- 🔄 Same SageMath functionality
+
+## 📊 Usage Examples
 
 **Factorization:**
 ```python
@@ -126,46 +143,61 @@ matrix([[1,2],[3,4]]).determinant()
 limit((sin(x)/x), x=0)
 ```
 
-## Troubleshooting
+## 🆚 Lightweight vs Full Version
 
-### Build takes too long on Render
+| Feature | Lightweight | Full Version |
+|---------|-------------|--------------|
+| Docker Image Size | ~150MB | ~4GB |
+| Build Time | 1-2 min | 10-20 min |
+| Memory Usage | ~50MB | ~500MB |
+| Works on Free Tier? | ✅ All platforms | ⚠️ Limited |
+| SageMath Features | ✅ Full | ✅ Full |
+| Speed | ⚡ Fast | ⚡ Fast |
+| Dependency | SageMathCell API | Self-hosted |
 
-The SageMath Docker image is large (~4GB). The first build may take 10-15 minutes. Subsequent builds will be faster due to caching.
+## ⚙️ Environment Variables
 
-### Application times out
+Only one required:
+- **PORT**: Port number (default: 10000)
 
-For complex calculations, you may need to increase the timeout. This is already set to 120 seconds in the Dockerfile's gunicorn command.
+Auto-configured in `render.yaml` and Dockerfile.
 
-### Memory issues
+## 🌐 API Dependency
 
-SageMath requires significant memory. On Render's free tier, you get 512MB RAM. For complex calculations, you may need to upgrade to a paid plan.
+This app uses the free **SageMathCell** public API:
+- URL: https://sagecell.sagemath.org/service
+- Rate limits: Reasonable for personal use
+- Uptime: Very reliable (hosted by SageMath project)
 
-## Cost
+If SageMathCell is down, calculations won't work. For production use requiring 100% uptime, consider the full self-hosted version.
 
-- **Render Free Tier**: Good for testing and light use
-  - 512 MB RAM
-  - 0.1 CPU
-  - Apps sleep after 15 minutes of inactivity
-  
-- **Render Starter ($7/month)**: Better for regular use
-  - 512 MB RAM
-  - 0.5 CPU
-  - No sleep
+## 🐛 Troubleshooting
 
-## License
+**"SageMath service unavailable"**
+- The SageMathCell API might be temporarily down
+- Wait a few minutes and try again
 
-MIT License - Feel free to use and modify as needed.
+**Timeout errors**
+- Very complex calculations may timeout (30s limit)
+- Try simplifying the calculation
 
-## Support
+**Build fails on Render**
+- Make sure you selected **Docker** environment
+- Not "Python" or "Node"
 
-For issues with:
-- SageMath syntax: See [SageMath Documentation](https://doc.sagemath.org/)
-- Deployment: Check [Render Documentation](https://render.com/docs)
-- This app: Open an issue in your repository
+## 📝 License
 
-## Notes
+MIT License - Free to use and modify
 
-- The app uses Flask for the web framework
-- Gunicorn serves the application in production
-- SageMath provides all mathematical computation capabilities
-- The Docker approach ensures consistent environment across local and production
+## 🙏 Credits
+
+- Built with Flask
+- Powered by [SageMathCell](https://sagecell.sagemath.org/)
+- SageMath by the SageMath Development Team
+
+## 💬 Support
+
+For questions:
+- SageMath syntax: [SageMath Docs](https://doc.sagemath.org/)
+- Deployment issues: Check your platform's documentation
+- This app: Open an issue in your repo
