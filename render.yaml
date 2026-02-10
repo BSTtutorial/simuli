@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: sagemath-calculator
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
