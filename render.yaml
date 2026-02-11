@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sagemath-calculator-lite
+    name: sagemath-calculator
     env: docker
     region: oregon
     plan: free
@@ -8,3 +8,5 @@ services:
     envVars:
       - key: PORT
         value: 10000
+      - key: COCALC_API_KEY
+        sync: false
